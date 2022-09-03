@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Col, Form, FormGroup, Row, Table } from "react-bootstrap";
+import { Accordion, Col, Form, FormGroup, Row, Table } from "react-bootstrap";
 import InputGroup from 'react-bootstrap/InputGroup';
 import { interestPayment, monthlyPayment } from "../LoanFunctions";
 
@@ -46,7 +46,15 @@ export const HomeLoan = () => {
     })}>
         <HomeLoanEditor></HomeLoanEditor>
         <HomeLoanResume></HomeLoanResume>
-        <AmortizationSchedule></AmortizationSchedule>
+        <Accordion defaultActiveKey="0">
+            <Accordion.Item eventKey="0">
+                <Accordion.Header>Amortization Schedule</Accordion.Header>
+                <Accordion.Body>
+                    <AmortizationSchedule></AmortizationSchedule>
+                </Accordion.Body>
+            </Accordion.Item>
+        </Accordion>
+
     </HomeLoanContext.Provider>;
 }
 
