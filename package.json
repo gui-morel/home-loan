@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://GwaDoush.github.io/home-loan",
+  "homepage": "https://gwadoush.github.io/home-loan",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
