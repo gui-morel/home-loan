@@ -241,7 +241,7 @@ const HomeLoanEditor = () => {
         <Row>
             <Col md="6">
                 <Form.Label htmlFor="loan-start-date" visuallyHidden>Start Date</Form.Label>
-                <Form.Control id="loan-start-date" value={moment(homeLoan.startDate).format("YYYY-MM-DD")} type="date" onChange={event => setHomeLoan({ ...homeLoan, startDate: event.target.valueAsDate })} />
+                <Form.Control id="loan-start-date" value={moment(homeLoan.startDate).format("YYYY-MM-DD")} type="date" onChange={event => setHomeLoan({ ...homeLoan, startDate: (event.target as any).valueAsDate })} />
             </Col>
         </Row>
     </>
