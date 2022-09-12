@@ -19,7 +19,7 @@ const defaultHomeLoan: HomeLoanState = {
     amount: 207000,
     rate: 0.0093,
     duration: 300,
-    currency: 'USD',
+    currency: 'EUR',
 }
 
 
@@ -191,7 +191,7 @@ const HomeLoanEditor = () => {
         </Col>
         <Col md="2">
             <Form.Label htmlFor="loan-currency" visuallyHidden>Amount</Form.Label>
-            <Form.Select id="loan-currency" onChange={event => setHomeLoan({ ...homeLoan, currency: event.target.value })}>
+            <Form.Select defaultValue={homeLoan.currency} id="loan-currency" onChange={event => setHomeLoan({ ...homeLoan, currency: event.target.value })}>
                 <option value="USD">$</option>
                 <option value="EUR">€</option>
                 <option value="GBP">£</option>
