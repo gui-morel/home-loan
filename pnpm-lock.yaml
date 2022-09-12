@@ -1,11 +1,13 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@types/moment': ^2.13.0
   '@types/react': ^18.0.17
   '@types/react-dom': ^18.0.6
   '@vitejs/plugin-react': ^2.0.1
   bootstrap: ^5.2.0
   gh-pages: ^4.0.0
+  moment: ^2.29.4
   react: ^18.2.0
   react-bootstrap: ^2.5.0
   react-dom: ^18.2.0
@@ -13,7 +15,9 @@ specifiers:
   vite: ^3.0.7
 
 dependencies:
+  '@types/moment': 2.13.0
   bootstrap: 5.2.0
+  moment: 2.29.4
   react: 18.2.0
   react-bootstrap: 2.5.0_63dfw6rfgd64rl77ptfma4cvt4
   react-dom: 18.2.0_react@18.2.0
@@ -388,6 +392,13 @@ packages:
       react-dom: 18.2.0_react@18.2.0
       uncontrollable: 7.2.1_react@18.2.0
       warning: 4.0.3
+    dev: false
+
+  /@types/moment/2.13.0:
+    resolution: {integrity: sha512-DyuyYGpV6r+4Z1bUznLi/Y7HpGn4iQ4IVcGn8zrr1P4KotKLdH0sbK1TFR6RGyX6B+G8u83wCzL+bpawKU/hdQ==}
+    deprecated: This is a stub types definition for Moment (https://github.com/moment/moment). Moment provides its own type definitions, so you don't need @types/moment installed!
+    dependencies:
+      moment: 2.29.4
     dev: false
 
   /@types/prop-types/15.7.5:
@@ -988,6 +999,10 @@ packages:
     dependencies:
       brace-expansion: 1.1.11
     dev: true
+
+  /moment/2.29.4:
+    resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
+    dev: false
 
   /ms/2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}

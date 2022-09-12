@@ -1,3 +1,4 @@
+import moment from "moment";
 import React, { useContext, useState } from "react";
 import { Accordion, Col, Form, FormGroup, Row, Table } from "react-bootstrap";
 import InputGroup from 'react-bootstrap/InputGroup';
@@ -12,7 +13,8 @@ type HomeLoanState = {
     amount: number,
     rate: number,
     duration: number,
-    currency: string
+    currency: string,
+    startDate: Date
 }
 
 const defaultHomeLoan: HomeLoanState = {
@@ -20,6 +22,7 @@ const defaultHomeLoan: HomeLoanState = {
     rate: 0.0093,
     duration: 300,
     currency: 'EUR',
+    startDate: new Date(1636070400000)
 }
 
 
@@ -64,6 +67,7 @@ type AmortizationSchedule = {
 }
 
 type AmortizationLine = {
+    date: Date,
     month: number,
     remaning: number,
     interestToDate: number,
@@ -74,24 +78,25 @@ type AmortizationLine = {
 }
 
 const computeAmortisationSchedule = (homeLoan: HomeLoanState): AmortizationSchedule => {
-    const firstLine = computeAmortizationLine(homeLoan.amount, homeLoan.amount, homeLoan.rate, homeLoan.duration, homeLoan.duration, 0, 0)
-    const amortizationLines: AmortizationLine[] = [firstLine, ...computeAmortizationLines(homeLoan, firstLine, firstLine.month - 1)]
+    const firstLine = computeAmortizationLine(homeLoan.amount, homeLoan.amount, homeLoan.rate, homeLoan.duration, 1, 0, 0, homeLoan.startDate)
+    const amortizationLines: AmortizationLine[] = [firstLine, ...computeAmortizationLines(homeLoan, firstLine, firstLine.month + 1)]
 
     return { lines: amortizationLines };
 }
 
 const computeAmortizationLines = (homeLoan: HomeLoanState, previousLine: AmortizationLine, month: number): AmortizationLine[] => {
-    if (month <= 0) {
+    if (month > homeLoan.duration) {
         return []
     }
-    const currentLine = computeAmortizationLine(homeLoan.amount, previousLine.remaning, homeLoan.rate, homeLoan.duration, month, previousLine.principalToDate, previousLine.interestToDate)
-    return [currentLine, ...computeAmortizationLines(homeLoan, currentLine, month - 1)]
+    const currentLine = computeAmortizationLine(homeLoan.amount, previousLine.remaning, homeLoan.rate, homeLoan.duration, month, previousLine.principalToDate, previousLine.interestToDate, previousLine.date)
+    return [currentLine, ...computeAmortizationLines(homeLoan, currentLine, month + 1)]
 }
 
-const computeAmortizationLine = (loanAmount: number, outstandingLoanBalance: number, loanRate: number, mensualityCount: number, month: number, principalToDate: number, interestToDate: number): AmortizationLine => {
+const computeAmortizationLine = (loanAmount: number, outstandingLoanBalance: number, loanRate: number, mensualityCount: number, month: number, principalToDate: number, interestToDate: number, date: Date): AmortizationLine => {
     const mensuality = computeMensuality(loanAmount, outstandingLoanBalance, loanRate, mensualityCount)
 
     return ({
+        date: moment(date).add(1, 'M').toDate(),
         month: month,
         remaning: outstandingLoanBalance - mensuality.principalPayment,
         monthlyInterest: mensuality.monthlyInterest,
@@ -118,6 +123,7 @@ const AmortizationSchedule = () => {
     return <Table striped bordered hover>
         <thead>
             <tr>
+                <th>Date</th>
                 <th>Month</th>
                 <th>Outstanding Loan Balance</th>
                 <th>Monthly Payment (Principal + Interest)</th>
@@ -126,23 +132,28 @@ const AmortizationSchedule = () => {
             </tr>
         </thead>
         <tbody>
-            {computeAmortisationSchedule(homeLoan).lines.map(line => <tr key={line.month}>
-                <td>
-                    {line.month}
-                </td>
-                <td>
-                    {line.remaning.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })}
-                </td>
-                <td>
-                    {`${line.monthlyPayment.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} (${line.principalPayment.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} + ${line.monthlyInterest.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })})`}
-                </td>
-                <td>
-                    {line.principalToDate.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })}
-                </td>
-                <td>
-                    {line.interestToDate.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })}
-                </td>
-            </tr>)}
+            {computeAmortisationSchedule(homeLoan).lines.map(line =>
+                <tr key={line.month} className={line.date < new Date() ? "table-success" : ""}>
+                    <td>
+                        {moment(line.date).calendar()}
+                    </td>
+                    <td>
+                        {line.month}
+                    </td>
+                    <td>
+                        {line.remaning.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })}
+                    </td>
+                    <td>
+                        {`${line.monthlyPayment.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} (${line.principalPayment.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} + ${line.monthlyInterest.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })})`}
+                    </td>
+                    <td>
+                        {line.principalToDate.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })}
+                    </td>
+                    <td>
+                        {line.interestToDate.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })}
+                    </td>
+                </tr>)
+            }
         </tbody>
     </Table>
 }
@@ -178,13 +189,28 @@ const HomeLoanResume = () => {
                 <Form.Control id="loan-duration" disabled type="text" value={(monthlyPayment(homeLoan.amount, homeLoan.rate, homeLoan.duration) * homeLoan.duration - homeLoan.amount).toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} />
             </Col>
         </FormGroup>
+
+        <FormGroup as={Row} className="mb-3">
+            <Form.Label sm={2} column htmlFor="loan-beggin">Loan Beggin</Form.Label>
+            <Col sm={10}>
+                <Form.Control id="loan-beggin" disabled type="date" value={moment(homeLoan.startDate).format("YYYY-MM-DD")} />
+            </Col>
+        </FormGroup>
+
+
+        <FormGroup as={Row} className="mb-3">
+            <Form.Label sm={2} column htmlFor="loan-end">Loan End</Form.Label>
+            <Col sm={10}>
+                <Form.Control id="loan-end" disabled type="date" value={moment(homeLoan.startDate).add(homeLoan.duration, 'M').format("YYYY-MM-DD")} />
+            </Col>
+        </FormGroup>
     </>
 }
 
 const HomeLoanEditor = () => {
     const { homeLoan, setHomeLoan } = useContext(HomeLoanContext)
 
-    return <Row>
+    return <> <Row>
         <Col md="6">
             <Form.Label htmlFor="loan-amount" visuallyHidden>Amount</Form.Label>
             <Form.Control id="loan-amount" type="text" onChange={event => setHomeLoan({ ...homeLoan, amount: Number(event.target.value) })} placeholder={(defaultHomeLoan.amount).toLocaleString(defaultHomeLoan.currency)} />
@@ -212,4 +238,11 @@ const HomeLoanEditor = () => {
             </InputGroup>
         </Col>
     </Row>
+        <Row>
+            <Col md="6">
+                <Form.Label htmlFor="loan-start-date" visuallyHidden>Start Date</Form.Label>
+                <Form.Control id="loan-start-date" value={moment(homeLoan.startDate).format("YYYY-MM-DD")} type="date" onChange={event => setHomeLoan({ ...homeLoan, startDate: event.target.valueAsDate })} />
+            </Col>
+        </Row>
+    </>
 }
