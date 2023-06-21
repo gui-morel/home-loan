@@ -3,6 +3,7 @@ import { Container, Tab, Tabs } from 'react-bootstrap';
 import './App.css';
 import { HomeLoan } from './components/HomeLoan';
 import { Investment } from './components/Investment';
+import { StateHistory } from './components/StateHistory';
 
 function App() {
   return (
@@ -15,7 +16,9 @@ function App() {
     >
       <Tab eventKey="loan" title="Home Loan">
         <Container>
-          <HomeLoan></HomeLoan>
+          <StateHistory historyName='homeloan'>
+            <HomeLoan></HomeLoan>
+          </StateHistory>
         </Container>
       </Tab>
       <Tab eventKey="investment" title="Financial Investment" disabled>
