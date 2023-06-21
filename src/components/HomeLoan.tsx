@@ -19,7 +19,7 @@ type HomeLoanState = {
 
 const defaultHomeLoan: HomeLoanState = {
     amount: 207000,
-    rate: 0.0093,
+    rate: 0.93,
     duration: 300,
     currency: 'EUR',
     startDate: new Date(1636070400000)
@@ -51,13 +51,13 @@ export const HomeLoan = React.forwardRef((_, ref) => {
         getState: () => {
             return homeLoan
         }
-      }));
+    }));
 
     return <HomeLoanContext.Provider value={({
         homeLoan,
         setHomeLoan
     })}>
-        <HomeLoanEditor></HomeLoanEditor>
+        <HomeLoanEditor {...homeLoan}></HomeLoanEditor>
         <HomeLoanResume></HomeLoanResume>
         <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
@@ -88,7 +88,7 @@ type AmortizationLine = {
 }
 
 const computeAmortisationSchedule = (homeLoan: HomeLoanState): AmortizationSchedule => {
-    const firstLine = computeAmortizationLine(homeLoan.amount, homeLoan.amount, homeLoan.rate, homeLoan.duration, 1, 0, 0, homeLoan.startDate)
+    const firstLine = computeAmortizationLine(homeLoan.amount, homeLoan.amount, homeLoan.rate / 100, homeLoan.duration, 1, 0, 0, homeLoan.startDate)
     const amortizationLines: AmortizationLine[] = [firstLine, ...computeAmortizationLines(homeLoan, firstLine, firstLine.month + 1)]
 
     return { lines: amortizationLines };
@@ -98,7 +98,7 @@ const computeAmortizationLines = (homeLoan: HomeLoanState, previousLine: Amortiz
     if (month > homeLoan.duration) {
         return []
     }
-    const currentLine = computeAmortizationLine(homeLoan.amount, previousLine.remaning, homeLoan.rate, homeLoan.duration, month, previousLine.principalToDate, previousLine.interestToDate, previousLine.date)
+    const currentLine = computeAmortizationLine(homeLoan.amount, previousLine.remaning, homeLoan.rate / 100, homeLoan.duration, month, previousLine.principalToDate, previousLine.interestToDate, previousLine.date)
     return [currentLine, ...computeAmortizationLines(homeLoan, currentLine, month + 1)]
 }
 
@@ -182,7 +182,7 @@ const HomeLoanResume = () => {
         <FormGroup as={Row} className="mb-3">
             <Form.Label sm={2} column htmlFor="loan-rate">Rate</Form.Label>
             <Col sm={10}>
-                <Form.Control id="loan-rate" disabled type="text" value={`${(homeLoan.rate * 100).toFixed(2)} %`} />
+                <Form.Control id="loan-rate" disabled type="text" value={`${homeLoan.rate} %`} />
             </Col>
         </FormGroup>
 
@@ -196,7 +196,7 @@ const HomeLoanResume = () => {
         <FormGroup as={Row} className="mb-3">
             <Form.Label sm={2} column htmlFor="loan-cost">Loan Cost</Form.Label>
             <Col sm={10}>
-                <Form.Control id="loan-duration" disabled type="text" value={(monthlyPayment(homeLoan.amount, homeLoan.rate, homeLoan.duration) * homeLoan.duration - homeLoan.amount).toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} />
+                <Form.Control id="loan-duration" disabled type="text" value={(monthlyPayment(homeLoan.amount, homeLoan.rate / 100, homeLoan.duration) * homeLoan.duration - homeLoan.amount).toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} />
             </Col>
         </FormGroup>
 
@@ -217,17 +217,20 @@ const HomeLoanResume = () => {
     </>
 }
 
-const HomeLoanEditor = () => {
-    const { homeLoan, setHomeLoan } = useContext(HomeLoanContext)
+const HomeLoanEditor = (homeLoan: HomeLoanState) => {
+    const { setHomeLoan } = useContext(HomeLoanContext)
 
     return <> <Row>
         <Col md="6">
             <Form.Label htmlFor="loan-amount" visuallyHidden>Amount</Form.Label>
-            <Form.Control id="loan-amount" type="text" onChange={event => setHomeLoan({ ...homeLoan, amount: Number(event.target.value) })} value={(homeLoan.amount).toLocaleString(homeLoan.currency)} />
+            <Form.Control key={homeLoan.amount} id="loan-amount" type="text"
+                defaultValue={homeLoan.amount}
+                onBlur={event => setHomeLoan({ ...homeLoan, amount: Number(event.target.value) })}></Form.Control>
         </Col>
         <Col md="2">
             <Form.Label htmlFor="loan-currency" visuallyHidden>Currency</Form.Label>
-            <Form.Select value={homeLoan.currency} id="loan-currency" onChange={event => setHomeLoan({ ...homeLoan, currency: event.target.value })}>
+            <Form.Select value={homeLoan.currency} id="loan-currency"
+                onChange={event => setHomeLoan({ ...homeLoan, currency: event.target.value })}>
                 <option value="USD">$</option>
                 <option value="EUR">€</option>
                 <option value="GBP">£</option>
@@ -236,14 +239,21 @@ const HomeLoanEditor = () => {
         <Col md="2">
             <Form.Label htmlFor="loan-rate" visuallyHidden>Rate</Form.Label>
             <InputGroup>
-                <Form.Control id="loan-rate" type="text" onChange={event => setHomeLoan({ ...homeLoan, rate: Number(event.target.value) / 100 })} value={(homeLoan.rate * 100).toFixed(2)} />
+                <Form.Control id="loan-rate" type="text"
+                    key={homeLoan.rate}
+                    onBlur={event => setHomeLoan({ ...homeLoan, rate: Number(event.target.value) })}
+                    defaultValue={homeLoan.rate}
+                />
                 <InputGroup.Text>%</InputGroup.Text>
             </InputGroup>
         </Col>
         <Col md="2">
             <Form.Label htmlFor="loan-duration" visuallyHidden>Duration in Year</Form.Label>
             <InputGroup>
-                <Form.Control id="loan-duration" type="text" onChange={event => setHomeLoan({ ...homeLoan, duration: Number(event.target.value) * 12 })} value={(homeLoan.duration / 12).toFixed(0)} />
+                <Form.Control id="loan-duration" type="text"
+                    key={homeLoan.duration}
+                    onBlur={event => setHomeLoan({ ...homeLoan, duration: Number(event.target.value) * 12 })}
+                    defaultValue={(homeLoan.duration / 12).toFixed(0)} />
                 <InputGroup.Text>Years</InputGroup.Text>
             </InputGroup>
         </Col>
