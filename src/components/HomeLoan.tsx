@@ -145,7 +145,14 @@ const AmortizationSchedule = () => {
             {computeAmortisationSchedule(homeLoan).lines.map(line =>
                 <tr key={line.month} className={line.date < new Date() ? "table-success" : ""}>
                     <td>
-                        {moment(line.date).calendar()}
+                        {moment(line.date).calendar({
+                            sameDay: '[Today]',
+                            nextDay: '[Tomorrow]',
+                            nextWeek: 'dddd',
+                            lastDay: '[Yesterday]',
+                            lastWeek: '[Last] dddd',
+                            sameElse: 'DD/MM/YYYY'
+                        })}
                     </td>
                     <td>
                         {line.month}
