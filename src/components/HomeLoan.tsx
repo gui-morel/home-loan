@@ -22,7 +22,7 @@ const defaultHomeLoan: HomeLoanState = {
     rate: 6.66,
     duration: 240,
     currency: 'EUR',
-    startDate: new Date(1704143264000)
+    startDate: new Date(1673732484000)
 }
 
 
