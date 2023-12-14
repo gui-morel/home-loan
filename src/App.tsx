@@ -11,7 +11,6 @@ function App() {
       defaultActiveKey="loan"
       id="fill-tab"
       className="mb-3 container-fluid"
-      transition={false}
       fill
     >
       <Tab eventKey="loan" title="Home Loan">
@@ -21,7 +20,7 @@ function App() {
           </StateHistory>
         </Container>
       </Tab>
-      <Tab eventKey="investment" title="Financial Investment" disabled>
+      <Tab eventKey="investment" title="Financial Investment">
         <Container>
           <Investment></Investment>
         </Container>

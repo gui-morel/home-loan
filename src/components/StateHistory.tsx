@@ -62,7 +62,7 @@ export const StateHistory = ({ children, historyName }: { children: JSX.Element,
                         </InputGroup>)}
 
                 </Stack>
-                <Button onClick={reset}>Reset</Button>
+                <Button onClick={reset}>Delete all</Button>
             </Offcanvas.Body>
         </Offcanvas>
         {childrenWithRef}

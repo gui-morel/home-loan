@@ -18,11 +18,11 @@ type HomeLoanState = {
 }
 
 const defaultHomeLoan: HomeLoanState = {
-    amount: 207000,
-    rate: 0.93,
-    duration: 300,
+    amount: 100000,
+    rate: 6.66,
+    duration: 240,
     currency: 'EUR',
-    startDate: new Date(1636070400000)
+    startDate: new Date(1704143264000)
 }
 
 
