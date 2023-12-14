@@ -1,11 +1,30 @@
-import React, { useState } from "react";
-import { Button, Form, InputGroup, Offcanvas, Stack } from "react-bootstrap";
-import { useHistoryState } from "./History";
+import React, {useState} from "react";
+import {Button, Form, InputGroup, Offcanvas, Stack} from "react-bootstrap";
+import {useHistoryState} from "./History";
 
-export const StateHistory = ({ children, historyName }: { children: JSX.Element, historyName: string }) => {
+const HistorySaver = ({onSave}: { onSave: (stateName: string) => void }) => {
+    const [currentSaveName, setCurrentSaveName] = useState<string>("")
+    const handleSave = () => {
+        if (currentSaveName === "") {
+            return
+        }
+        onSave(currentSaveName)
+        setCurrentSaveName("")
+    }
+
+    return <>
+        <Form.Control
+            placeholder="My simulation 207K..."
+            value={currentSaveName}
+            onChange={event => setCurrentSaveName(event.target.value)}
+        />
+        <Button variant="outline-secondary" onClick={handleSave}>Save</Button>
+    </>;
+}
+
+export const StateHistory = ({children, historyName}: { children: JSX.Element, historyName: string }) => {
 
     const [history, historyActions] = useHistoryState<any>(historyName)
-    const [currentSaveName, setCurrentSaveName] = useState<string>("")
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false)
     const handleShow = () => setShow(true)
@@ -28,10 +47,9 @@ export const StateHistory = ({ children, historyName }: { children: JSX.Element,
     const reset = () => {
         historyActions.reset()
     }
-    const saveState = () => {
+    const saveState = (currentSaveName: string) => {
         const stateToSave = childrenRef?.getState()
         stateToSave && historyActions.save(currentSaveName, stateToSave)
-        stateToSave && setCurrentSaveName("")
     };
 
     return <>
@@ -42,12 +60,7 @@ export const StateHistory = ({ children, historyName }: { children: JSX.Element,
             </Offcanvas.Header>
             <Offcanvas.Body>
                 <InputGroup className="mb-3">
-                    <Form.Control
-                        placeholder="My simulation 207K..."
-                        value={currentSaveName}
-                        onChange={event => setCurrentSaveName(event.currentTarget.value)}
-                    />
-                    <Button variant="outline-secondary" onClick={saveState}>Save</Button>
+                    <HistorySaver onSave={saveState}/>
                 </InputGroup>
 
                 <Stack gap={3}>
