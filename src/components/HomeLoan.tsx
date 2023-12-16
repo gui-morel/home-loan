@@ -133,7 +133,7 @@ const AmortizationSchedule = () => {
     return <Table striped bordered hover>
         <thead className="sticky-top bg-light">
             <tr>
-                <th>Date</th>
+                <th>Date<sup className="text-muted">(dd/mm/aaaa)</sup></th>
                 <th>Month</th>
                 <th>Outstanding Loan Balance</th>
                 <th>Monthly Payment (Principal + Interest)</th>
@@ -248,7 +248,7 @@ const HomeLoanEditor = (homeLoan: HomeLoanState) => {
             <InputGroup>
                 <Form.Control id="loan-rate" type="text"
                     key={homeLoan.rate}
-                    onBlur={event => setHomeLoan({ ...homeLoan, rate: Number(event.target.value) })}
+                    onBlur={event => setHomeLoan({ ...homeLoan, rate: Number(event.target.value.replace(',', '.')) })}
                     defaultValue={homeLoan.rate}
                 />
                 <InputGroup.Text>%</InputGroup.Text>
