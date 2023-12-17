@@ -20,7 +20,7 @@ function App() {
           </StateHistory>
         </Container>
       </Tab>
-      <Tab eventKey="investment" title="Financial Investment (WIP)">
+      <Tab eventKey="investment" title="Financial Investment">
         <Row className="d-flex justify-content-center">
           <Investment></Investment>
         </Row>

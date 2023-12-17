@@ -3,7 +3,7 @@ import {Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
 
 export const ThemeToggle = ({children}: { children: React.ReactElement }) => {
-    const [theme, setTheme] = useState('light');
+    const [theme, setTheme] = useState('dark');
 
     useEffect(() => {
         document.getElementsByTagName("html")[0].setAttribute('data-bs-theme', theme)
