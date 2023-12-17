@@ -10,10 +10,10 @@ export const gainsOrLoss = (portfolioCapital: number, movements: number[]) => {
 
 export type Movement = {
     amount: number,
-    executionDate: Date,
+    executionDate: number,
 }
 
-export const contributionWeightedOverTime = (today: Date, movements: Movement[]) => {
+export const contributionWeightedOverTime = (today: number, movements: Movement[]) => {
     const movementWithDayCount = movements.map(movement => ({
             amount: movement.amount,
             dayCount: dayBetween(movement.executionDate, today)
@@ -26,8 +26,8 @@ export const contributionWeightedOverTime = (today: Date, movements: Movement[])
     }) => acc + amount * (dayCount / maxDayCount), 0)
 }
 
-export const dayBetween = (date1: Date, date2: Date) => {
-    const diffInTime = date1.getTime() - date2.getTime();
+export const dayBetween = (date1: number, date2: number) => {
+    const diffInTime = date1 - date2;
     const diffInDays = Math.round(diffInTime / (1000 * 3600 * 24));
     return Math.abs(diffInDays);
 }

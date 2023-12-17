@@ -19,11 +19,11 @@ describe('Formula', () => {
         );
 
         it(`Dietz method should compute performance of movements flow`, () => {
-            const today = new Date('01/01/2020')
+            const today = new Date('01/01/2020').getTime()
             const givenFlow: Movement[] = [
-                {amount: 100000, executionDate: new Date('01/01/2019')},
-                {amount: -50000, executionDate: new Date('05/16/2019')},
-                {amount: 150000, executionDate: new Date('07/29/2019')},
+                {amount: 100000, executionDate: new Date('01/01/2019').getTime()},
+                {amount: -50000, executionDate: new Date('05/16/2019').getTime()},
+                {amount: 150000, executionDate: new Date('07/29/2019').getTime()},
             ]
 
             const computedPerformance = modifiedDietzMethod(
@@ -50,11 +50,11 @@ describe('Formula', () => {
 
     describe('Modified Dietz method - Contribution Weighted Over Time', () => {
         it(`Sum of inflow and outflow weighted over time`, () => {
-            const today = new Date('01/01/2020')
+            const today = new Date('01/01/2020').getTime()
             const givenFlow: Movement[] = [
-                {amount: 100000, executionDate: new Date('01/01/2019')},
-                {amount: -50000, executionDate: new Date('05/16/2019')},
-                {amount: 150000, executionDate: new Date('07/29/2019')},
+                {amount: 100000, executionDate: new Date('01/01/2019').getTime()},
+                {amount: -50000, executionDate: new Date('05/16/2019').getTime()},
+                {amount: 150000, executionDate: new Date('07/29/2019').getTime()},
             ]
             const expectedWeightedOverTime = 132602.73972602742
             const weightedOverTime = contributionWeightedOverTime(today, givenFlow);
@@ -67,7 +67,7 @@ describe('Formula', () => {
             {date1: new Date("07/29/2019"), date2: new Date("07/29/2019"), expectedDays: 0},
         ].forEach(({date1, date2, expectedDays}) =>
             it(`Between ${date1.toLocaleDateString()} and ${date2.toLocaleDateString()} there is ${expectedDays} days`, () => {
-                const daysBetween = dayBetween(date1, date2);
+                const daysBetween = dayBetween(date1.getTime(), date2.getTime());
                 expect(daysBetween).toEqual(expectedDays)
             })
         );

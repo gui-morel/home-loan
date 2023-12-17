@@ -1,40 +1,37 @@
 import {Movement} from "./formula";
-import React, {useEffect, useRef, useState} from "react";
+import React, {useEffect, useImperativeHandle, useRef, useState} from "react";
 import {Button, FloatingLabel, Form, Stack, Table} from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
 import {Calculator, CheckIcon, EditIcon, PlusIcon, TrashIcon, Undo2} from "lucide-react";
 import {DietzMethod} from "./DietzMethod";
+import {EasyStateHistory} from "../StateHistory";
 
 export type DietzState = {
-    endDate: Date
+    endDate: number
     flow: Movement[]
     currentCapital: number
 }
 const defaultDietz: DietzState = {
-    endDate: new Date('01/01/2021'),
+    endDate: new Date('01/01/2021').getTime(),
     flow: [
-        {amount: 100000, executionDate: new Date('01/01/2019')},
-        {amount: -50000, executionDate: new Date('05/16/2019')},
-        {amount: 150000, executionDate: new Date('07/29/2019')},
+        {amount: 100000, executionDate: new Date('01/01/2019').getTime()},
+        {amount: -50000, executionDate: new Date('05/16/2019').getTime()},
+        {amount: 150000, executionDate: new Date('07/29/2019').getTime()},
     ],
     currentCapital: 220000,
 }
 
-const InvestmentInput = ({updateInvestment}: { updateInvestment: (state: DietzState) => void }) => {
-    const [investmentState, setInvestmentState] = useState(defaultDietz)
-    const [autoCompute, setAutoCompute] = useState(false)
-
+const InvestmentInput = ({updateInvestment, defaultValues}: {
+    defaultValues: DietzState,
+    updateInvestment: (state: DietzState) => void
+}) => {
     const endDateIsToday = () => {
-        const today = new Date();
-        setInvestmentState({...investmentState, endDate: today});
-        (endDateInput.current as any).value = today.toLocaleDateString("en-CA");
+        const today = Date.now();
+        updateInvestment({...defaultValues, endDate: today});
+        (endDateInput.current as any).value = new Date(today).toLocaleDateString("en-CA");
     }
 
     const endDateInput = useRef(null)
-
-    useEffect(() => {
-        autoCompute && updateInvestment(investmentState)
-    }, [autoCompute, investmentState])
 
     return (
         <Stack gap={3}>
@@ -42,9 +39,9 @@ const InvestmentInput = ({updateInvestment}: { updateInvestment: (state: DietzSt
                 controlId="floatingInput"
                 label="Current Capital"
             >
-                <Form.Control defaultValue={investmentState.currentCapital}
-                              onBlur={e => setInvestmentState({
-                                  ...investmentState,
+                <Form.Control value={defaultValues.currentCapital}
+                              onChange={e => updateInvestment({
+                                  ...defaultValues,
                                   currentCapital: Number(e.target.value)
                               })}
                 />
@@ -53,36 +50,28 @@ const InvestmentInput = ({updateInvestment}: { updateInvestment: (state: DietzSt
                 <Button onClick={endDateIsToday}>Today</Button>
                 <FloatingLabel controlId="floatingDate" label="End Date">
                     <Form.Control ref={endDateInput} size="sm" type="date"
-                                  defaultValue={investmentState.endDate.toLocaleDateString("en-CA")}
-                                  onBlur={e => setInvestmentState({
-                                      ...investmentState,
+                                  value={new Date(defaultValues.endDate).toLocaleDateString("en-CA")}
+                                  onChange={e => updateInvestment({
+                                      ...defaultValues,
                                       endDate: (e.target as any).valueAsDate
                                   })}/>
                 </FloatingLabel>
             </InputGroup>
-            <MovementTable updateMovements={movements => setInvestmentState({...investmentState, flow: movements})}/>
-            <Stack direction="horizontal" className="d-flex justify-content-between">
-                <Form.Check
-                    type="switch"
-                    id="auto-compute-switch"
-                    label="Auto Compute"
-                    checked={autoCompute}
-                    onChange={e => setAutoCompute(e.target.checked)}
-                />
-                <Button className="col-10" variant="success"
-                        disabled={autoCompute}
-                        onClick={_ => updateInvestment(investmentState)}>Compute <Calculator/></Button>
-            </Stack>
+            <MovementTable movements={defaultValues.flow}
+                           updateMovements={movements => updateInvestment({...defaultValues, flow: movements})}/>
         </Stack>
     );
 }
 
-const MovementTable = ({updateMovements}: { updateMovements: (movements: Movement[]) => void }) => {
-    const [state, setState] = useState(defaultDietz.flow.map((movement, index) => ({movement, key: index})))
-    const [nextKey, setNextKey] = useState(defaultDietz.flow.length)
+const MovementTable = ({updateMovements, movements}: {
+    updateMovements: (movements: Movement[]) => void,
+    movements: Movement[]
+}) => {
+    const [state, setState] = useState(movements.map((movement, index) => ({movement, key: index})))
+    const [nextKey, setNextKey] = useState(movements.length)
 
     const addLine = () => {
-        setState([...state, {movement: {amount: 0, executionDate: new Date()}, key: nextKey + 1}]);
+        setState([...state, {movement: {amount: 0, executionDate: Date.now()}, key: nextKey + 1}]);
         setNextKey(nextKey + 1);
     }
     const deleteLine = (indexToDel: number) => {
@@ -111,7 +100,7 @@ const MovementTable = ({updateMovements}: { updateMovements: (movements: Movemen
             </thead>
             <tbody>
             {
-                state.sort((a, b) => a.movement.executionDate.getTime() - b.movement.executionDate.getTime())
+                state.sort((a, b) => a.movement.executionDate - b.movement.executionDate)
                     .map(({key, movement}, index) => <MovementLine key={key} index={index} movement={movement}
                                                                    deleteLine={() => deleteLine(index)}
                                                                    updateLine={newMovement => updateMovement(index, newMovement)}/>)
@@ -138,10 +127,11 @@ const MovementLine = ({index, movement, deleteLine, updateLine}: {
         {
             editing ?
                 <td className="col-3">
-                    <Form.Control size="sm" type="date" defaultValue={executionDate.toLocaleDateString("en-CA")}
+                    <Form.Control size="sm" type="date"
+                                  defaultValue={new Date(executionDate).toLocaleDateString("en-CA")}
                                   onBlur={e => setExecutionDate((e.target as any).valueAsDate)}/>
                 </td> :
-                <td className="col-3">{movement.executionDate.toLocaleDateString()}</td>
+                <td className="col-3">{new Date(movement.executionDate).toLocaleDateString()}</td>
         }
         {
             editing ?
@@ -157,7 +147,6 @@ const MovementLine = ({index, movement, deleteLine, updateLine}: {
                     <Button variant="success" size="sm" onClick={_ => {
                         updateLine({amount, executionDate})
                         setEditing(false)
-                        console.log("updateing line", amount, executionDate)
                     }}>
                         <CheckIcon/>
                     </Button>
@@ -184,9 +173,12 @@ const MovementLine = ({index, movement, deleteLine, updateLine}: {
 
 export const Investment = () => {
     const [dietzState, setDietzState] = useState(defaultDietz)
-    console.log(dietzState)
     return <div className="col-6 d-flex flex-column align-items-center">
-        <InvestmentInput updateInvestment={setDietzState}/>
+        <EasyStateHistory currentState={dietzState} loadState={state => {
+            console.log(state)
+            setDietzState(state)
+        }} historyName="investement"></EasyStateHistory>
+        <InvestmentInput defaultValues={dietzState} updateInvestment={setDietzState}/>
         <DietzMethod {...dietzState}/>
     </div>
 }
