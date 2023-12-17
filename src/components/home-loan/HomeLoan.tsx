@@ -2,7 +2,7 @@ import moment from "moment";
 import React, { useContext, useImperativeHandle, useState } from "react";
 import { Accordion, Col, Form, FormGroup, Row, Table } from "react-bootstrap";
 import InputGroup from 'react-bootstrap/InputGroup';
-import { interestPayment, monthlyPayment } from "../LoanFunctions";
+import { interestPayment, monthlyPayment } from "../../LoanFunctions";
 
 type HomeLoanContext = {
     homeLoan: HomeLoanState,

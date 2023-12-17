@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Tab, Tabs } from 'react-bootstrap';
+import {Container, Row, Tab, Tabs} from 'react-bootstrap';
 import './App.css';
-import { HomeLoan } from './components/HomeLoan';
-import { Investment } from './components/Investment';
+import { HomeLoan } from './components/home-loan/HomeLoan';
+import { Investment } from './components/financial-investment/Investment';
 import { StateHistory } from './components/StateHistory';
 
 function App() {
@@ -20,10 +20,10 @@ function App() {
           </StateHistory>
         </Container>
       </Tab>
-      <Tab eventKey="investment" title="Financial Investment">
-        <Container>
+      <Tab eventKey="investment" title="Financial Investment (WIP)">
+        <Row className="d-flex justify-content-center">
           <Investment></Investment>
-        </Container>
+        </Row>
       </Tab>
     </Tabs>
   )
