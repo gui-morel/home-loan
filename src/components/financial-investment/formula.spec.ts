@@ -1,5 +1,12 @@
 import {describe, it, expect} from 'vitest';
-import {contributionWeightedOverTime, dayBetween, gainsOrLoss, modifiedDietzMethod, Movement} from "./formula";
+import {
+    absolutePerformance,
+    contributionWeightedOverTime,
+    dayBetween,
+    gainsOrLoss,
+    modifiedDietzMethod,
+    Movement
+} from "./formula";
 
 describe('Formula', () => {
     describe('Modified Dietz method - Performance', () => {
@@ -73,4 +80,10 @@ describe('Formula', () => {
         );
     });
 
+    describe('Absolute Performance', () => {
+        it(`compute the percentage of augmentation between invested and investment returns`, () => {
+            const performance = absolutePerformance(1000, 1500);
+            expect(performance).toEqual(0.5)
+        })
+    });
 });

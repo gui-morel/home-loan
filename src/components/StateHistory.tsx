@@ -126,8 +126,7 @@ export const EasyStateHistory = <E, >({historyName, currentState, loadState}: {
                         </InputGroup>)}
 
                 </Stack>
-                <Button onClick={() => {
-                }}>Delete all</Button>
+                <Button onClick={() => historyActions.reset()}>Delete all</Button>
             </Offcanvas.Body>
         </Offcanvas>
     </>

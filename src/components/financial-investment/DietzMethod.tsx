@@ -1,8 +1,13 @@
-import {contributionWeightedOverTime, gainsOrLoss, modifiedDietzMethod} from "./formula";
+import {contributionWeightedOverTime, gainsOrLoss, modifiedDietzMethod, Movement} from "./formula";
 import React from "react";
-import {DietzState} from "./Investment";
 
-export const DietzMethod = ({endDate, flow, currentCapital}: DietzState) => {
+export type DietzProps = {
+    endDate: number
+    flow: Movement[]
+    currentCapital: number
+}
+
+export const DietzMethod = ({endDate, flow, currentCapital}: DietzProps) => {
     const performance = modifiedDietzMethod(
         gainsOrLoss(currentCapital, flow.map(it => it.amount)),
         contributionWeightedOverTime(endDate, flow)

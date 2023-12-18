@@ -1,34 +1,30 @@
 import {Movement} from "./formula";
-import React, {useEffect, useImperativeHandle, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {Button, FloatingLabel, Form, Stack, Table} from "react-bootstrap";
 import InputGroup from "react-bootstrap/InputGroup";
-import {Calculator, CheckIcon, EditIcon, PlusIcon, TrashIcon, Undo2} from "lucide-react";
-import {DietzMethod} from "./DietzMethod";
+import {CheckIcon, EditIcon, PlusIcon, TrashIcon, Undo2} from "lucide-react";
+import {DietzMethod, DietzProps} from "./DietzMethod";
 import {EasyStateHistory} from "../StateHistory";
+import {AbsolutePerformance} from "./AbsolutePerformance";
 
-export type DietzState = {
-    endDate: number
-    flow: Movement[]
-    currentCapital: number
-}
-const defaultDietz: DietzState = {
+const defaultDietz: DietzProps = {
     endDate: new Date('01/01/2021').getTime(),
     flow: [
-        {amount: 100000, executionDate: new Date('01/01/2019').getTime()},
-        {amount: -50000, executionDate: new Date('05/16/2019').getTime()},
-        {amount: 150000, executionDate: new Date('07/29/2019').getTime()},
+        {id: 1, amount: 100000, executionDate: new Date('01/01/2019').getTime()},
+        {id: 2, amount: -50000, executionDate: new Date('05/16/2019').getTime()},
+        {id: 3, amount: 150000, executionDate: new Date('07/29/2019').getTime()},
     ],
     currentCapital: 220000,
 }
 
-const InvestmentInput = ({updateInvestment, defaultValues}: {
-    defaultValues: DietzState,
-    updateInvestment: (state: DietzState) => void
+const InvestmentInput = ({updateInvestment, state}: {
+    state: InvestmentState,
+    updateInvestment: (state: InvestmentState) => void
 }) => {
     const endDateIsToday = () => {
-        const today = Date.now();
-        updateInvestment({...defaultValues, endDate: today});
-        (endDateInput.current as any).value = new Date(today).toLocaleDateString("en-CA");
+        const today = new Date();
+        updateInvestment({...state, endDate: today.getTime()});
+        (endDateInput.current as any).value = today.toLocaleDateString("en-CA");
     }
 
     const endDateInput = useRef(null)
@@ -39,9 +35,9 @@ const InvestmentInput = ({updateInvestment, defaultValues}: {
                 controlId="floatingInput"
                 label="Current Capital"
             >
-                <Form.Control value={defaultValues.currentCapital}
+                <Form.Control value={state.currentCapital}
                               onChange={e => updateInvestment({
-                                  ...defaultValues,
+                                  ...state,
                                   currentCapital: Number(e.target.value)
                               })}
                 />
@@ -50,15 +46,15 @@ const InvestmentInput = ({updateInvestment, defaultValues}: {
                 <Button onClick={endDateIsToday}>Today</Button>
                 <FloatingLabel controlId="floatingDate" label="End Date">
                     <Form.Control ref={endDateInput} size="sm" type="date"
-                                  value={new Date(defaultValues.endDate).toLocaleDateString("en-CA")}
+                                  value={new Date(state.endDate).toLocaleDateString("en-CA")}
                                   onChange={e => updateInvestment({
-                                      ...defaultValues,
-                                      endDate: (e.target as any).valueAsDate
+                                      ...state,
+                                      endDate: (e.target as any).valueAsDate.getTime()
                                   })}/>
                 </FloatingLabel>
             </InputGroup>
-            <MovementTable movements={defaultValues.flow}
-                           updateMovements={movements => updateInvestment({...defaultValues, flow: movements})}/>
+            <MovementTable movements={state.flow}
+                           updateMovements={movements => updateInvestment({...state, flow: [...movements]})}/>
         </Stack>
     );
 }
@@ -67,28 +63,29 @@ const MovementTable = ({updateMovements, movements}: {
     updateMovements: (movements: Movement[]) => void,
     movements: Movement[]
 }) => {
-    const [state, setState] = useState(movements.map((movement, index) => ({movement, key: index})))
+    // const [state, setState] = useState(movements.map((movement, index) => ({movement, key: index})))
     const [nextKey, setNextKey] = useState(movements.length)
 
     const addLine = () => {
-        setState([...state, {movement: {amount: 0, executionDate: Date.now()}, key: nextKey + 1}]);
+        const newState = [...movements, {amount: 0, executionDate: Date.now(), id: Math.random()}];
         setNextKey(nextKey + 1);
-    }
-    const deleteLine = (indexToDel: number) => {
-        setState(state.filter((_, index) => index != indexToDel));
-    }
-    const updateMovement = (indexToUpdate: number, movement: Movement) => {
-        setState(
-            state.map((value, index) =>
-                index == indexToUpdate ? {movement: movement, key: value.key} : value)
-        );
+        updateMovements(newState)
     }
 
-    useEffect(() => {
-        updateMovements(state.map(item => item.movement))
-    }, [state])
+    const clearLines = () => {
+        setNextKey(0);
+        updateMovements([])
+    }
+
+    const deleteLine = (deletedId: number) =>
+        updateMovements(movements.filter(movement => movement.id != deletedId))
+
+    const updateMovement = (movement: Movement) =>
+        updateMovements(movements.map(value => value.id == movement.id ? movement : value))
 
     return <>
+        <Button onClick={addLine}><PlusIcon/></Button>
+        <Button variant="danger" onClick={clearLines}><TrashIcon/></Button>
         <Table striped>
             <thead>
             <tr>
@@ -100,14 +97,13 @@ const MovementTable = ({updateMovements, movements}: {
             </thead>
             <tbody>
             {
-                state.sort((a, b) => a.movement.executionDate - b.movement.executionDate)
-                    .map(({key, movement}, index) => <MovementLine key={key} index={index} movement={movement}
-                                                                   deleteLine={() => deleteLine(index)}
-                                                                   updateLine={newMovement => updateMovement(index, newMovement)}/>)
+                movements.sort((a, b) => a.executionDate - b.executionDate)
+                    .map((movement, index) => <MovementLine key={movement.id} index={index} movement={movement}
+                                                   deleteLine={() => deleteLine(movement.id)}
+                                                   updateLine={newMovement => updateMovement(newMovement)}/>)
             }
             </tbody>
         </Table>
-        <Button onClick={addLine}><PlusIcon/></Button>
     </>
 }
 
@@ -129,7 +125,7 @@ const MovementLine = ({index, movement, deleteLine, updateLine}: {
                 <td className="col-3">
                     <Form.Control size="sm" type="date"
                                   defaultValue={new Date(executionDate).toLocaleDateString("en-CA")}
-                                  onBlur={e => setExecutionDate((e.target as any).valueAsDate)}/>
+                                  onBlur={e => setExecutionDate((e.target as any).valueAsDate?.getTime())}/>
                 </td> :
                 <td className="col-3">{new Date(movement.executionDate).toLocaleDateString()}</td>
         }
@@ -145,7 +141,7 @@ const MovementLine = ({index, movement, deleteLine, updateLine}: {
             {
                 editing ? <>
                     <Button variant="success" size="sm" onClick={_ => {
-                        updateLine({amount, executionDate})
+                        updateLine({amount, executionDate: executionDate, id: movement.id})
                         setEditing(false)
                     }}>
                         <CheckIcon/>
@@ -170,15 +166,30 @@ const MovementLine = ({index, movement, deleteLine, updateLine}: {
     </tr>;
 }
 
+type InvestmentState = {
+    endDate: number
+    flow: Movement[]
+    currentCapital: number
+}
+
 
 export const Investment = () => {
-    const [dietzState, setDietzState] = useState(defaultDietz)
+    const [investmentState, setInvestmentState] = useState<InvestmentState>(defaultDietz)
+
+    const updateInvestment = (investment: DietzProps) => {
+        setInvestmentState({...investment, flow: [...investment.flow]})
+    }
+
     return <div className="col-6 d-flex flex-column align-items-center">
-        <EasyStateHistory currentState={dietzState} loadState={state => {
-            console.log(state)
-            setDietzState(state)
-        }} historyName="investement"></EasyStateHistory>
-        <InvestmentInput defaultValues={dietzState} updateInvestment={setDietzState}/>
-        <DietzMethod {...dietzState}/>
+        <EasyStateHistory currentState={investmentState}
+                          loadState={state => setInvestmentState(state)}
+                          historyName="investement"/>
+        <InvestmentInput state={investmentState}
+                         updateInvestment={updateInvestment}/>
+        <DietzMethod {...investmentState}/>
+        <AbsolutePerformance investedCapital={amounts(investmentState.flow)}
+                             actualCapital={investmentState.currentCapital}/>
     </div>
 }
+
+const amounts = (flow: Movement[]) => flow.reduce((acc, flow) => acc + flow.amount, 0)
