@@ -28,9 +28,9 @@ describe('Formula', () => {
         it(`Dietz method should compute performance of movements flow`, () => {
             const today = new Date('01/01/2020').getTime()
             const givenFlow: Movement[] = [
-                {amount: 100000, executionDate: new Date('01/01/2019').getTime()},
-                {amount: -50000, executionDate: new Date('05/16/2019').getTime()},
-                {amount: 150000, executionDate: new Date('07/29/2019').getTime()},
+                {id: 1,amount: 100000, executionDate: new Date('01/01/2019').getTime()},
+                {id: 2,amount: -50000, executionDate: new Date('05/16/2019').getTime()},
+                {id: 3,amount: 150000, executionDate: new Date('07/29/2019').getTime()},
             ]
 
             const computedPerformance = modifiedDietzMethod(
@@ -59,9 +59,9 @@ describe('Formula', () => {
         it(`Sum of inflow and outflow weighted over time`, () => {
             const today = new Date('01/01/2020').getTime()
             const givenFlow: Movement[] = [
-                {amount: 100000, executionDate: new Date('01/01/2019').getTime()},
-                {amount: -50000, executionDate: new Date('05/16/2019').getTime()},
-                {amount: 150000, executionDate: new Date('07/29/2019').getTime()},
+                {id: 0, amount: 100000, executionDate: new Date('01/01/2019').getTime()},
+                {id: 1, amount: -50000, executionDate: new Date('05/16/2019').getTime()},
+                {id: 2, amount: 150000, executionDate: new Date('07/29/2019').getTime()},
             ]
             const expectedWeightedOverTime = 132602.73972602742
             const weightedOverTime = contributionWeightedOverTime(today, givenFlow);
