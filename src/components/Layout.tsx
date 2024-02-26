@@ -17,8 +17,8 @@ export const Layout = () => {
                         style={{maxHeight: '100px'}}
                         navbarScroll
                     >
-                        <Nav.Link as={Link} to="/home-loan" target="_blank"><FaHouseCircleCheck/> Home Loan</Nav.Link>
-                        <Nav.Link as={Link} to="/investment" target="_blank"><AiOutlineStock/> Investment</Nav.Link>
+                        <Nav.Link as={Link} to="/home-loan"><FaHouseCircleCheck/> Home Loan</Nav.Link>
+                        <Nav.Link as={Link} to="/investment"><AiOutlineStock/> Investment</Nav.Link>
                     </Nav>
                     <ThemeToggle/>
                 </Navbar.Collapse>
