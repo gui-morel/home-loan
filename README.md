@@ -1,1 +1,1 @@
-Demo available here : https://gwadoush.github.io/home-loan/
+Demo available here : https://gui-morel.github.io/home-loan/

@@ -2,7 +2,7 @@ import {Moon, Sun} from 'lucide-react';
 import {Button} from "react-bootstrap";
 import {useEffect, useState} from "react";
 
-export const ThemeToggle = ({children}: { children: React.ReactElement }) => {
+export const ThemeToggle = () => {
     const [theme, setTheme] = useState('dark');
 
     useEffect(() => {
@@ -10,19 +10,15 @@ export const ThemeToggle = ({children}: { children: React.ReactElement }) => {
     }, [theme])
 
     return (
-        <div>
-            <Button
-                onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
-                className="position-fixed z-1 m-3 mt-5"
-                variant={"outline-secondary"}
-            >
-                {
-                    theme === 'light' ?
-                        <Sun className=""/> :
-                        <Moon className=""/>
-                }
-            </Button>
-            {children}
-        </div>
+        <Button
+            onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+            variant={"outline-secondary"}
+        >
+            {
+                theme === 'light' ?
+                    <Sun className=""/> :
+                    <Moon className=""/>
+            }
+        </Button>
     );
 }

@@ -180,7 +180,7 @@ export const Investment = () => {
         setInvestmentState({...investment, flow: [...investment.flow]})
     }
 
-    return <div className="col-6 d-flex flex-column align-items-center">
+    return <>
         <EasyStateHistory currentState={investmentState}
                           loadState={state => setInvestmentState(state)}
                           historyName="investement"/>
@@ -189,7 +189,7 @@ export const Investment = () => {
         <DietzMethod {...investmentState}/>
         <AbsolutePerformance investedCapital={amounts(investmentState.flow)}
                              actualCapital={investmentState.currentCapital}/>
-    </div>
+    </>
 }
 
 const amounts = (flow: Movement[]) => flow.reduce((acc, flow) => acc + flow.amount, 0)

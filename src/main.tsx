@@ -6,8 +6,6 @@ import {ThemeToggle} from "./components/ThemeToggle";
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
-        <ThemeToggle>
-            <App/>
-        </ThemeToggle>
+        <App/>
     </React.StrictMode>
 )

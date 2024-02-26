@@ -3,6 +3,7 @@ import React, { useContext, useImperativeHandle, useState } from "react";
 import { Accordion, Col, Form, FormGroup, Row, Table } from "react-bootstrap";
 import InputGroup from 'react-bootstrap/InputGroup';
 import { interestPayment, monthlyPayment } from "../../LoanFunctions";
+import {EasyStateHistory} from "../StateHistory";
 
 type HomeLoanContext = {
     homeLoan: HomeLoanState,
@@ -57,6 +58,9 @@ export const HomeLoan = React.forwardRef((_, ref) => {
         homeLoan,
         setHomeLoan
     })}>
+        <EasyStateHistory currentState={homeLoan}
+                          loadState={state => setHomeLoan(state)}
+                          historyName="homeloan"/>
         <HomeLoanEditor {...homeLoan}></HomeLoanEditor>
         <HomeLoanResume></HomeLoanResume>
         <Accordion defaultActiveKey="0">
