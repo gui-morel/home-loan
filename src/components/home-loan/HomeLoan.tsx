@@ -4,7 +4,8 @@ import { Accordion, Col, Form, FormGroup, Row, Table } from "react-bootstrap";
 import InputGroup from 'react-bootstrap/InputGroup';
 import { interestPayment, monthlyPayment } from "../../LoanFunctions";
 import { EasyStateHistory } from "../StateHistory";
-import { HomeLoanUrlLoader } from "./HomeLoanUrlLoader";
+import { StateQueryParam } from "../query-param-loader/StateQueryParam";
+import { toQueryParam, toState } from "../query-param-loader/queryParamFunctions";
 
 type HomeLoanContext = {
     homeLoan: HomeLoanState,
@@ -59,7 +60,7 @@ export const HomeLoan = React.forwardRef((_, ref) => {
         homeLoan,
         setHomeLoan
     })}>
-        <HomeLoanUrlLoader currentState={homeLoan} loadState={state => setHomeLoan(state)}></HomeLoanUrlLoader>
+        <StateQueryParam currentState={homeLoan} loadState={state => setHomeLoan(state)} toState={toState} toQueryParam={toQueryParam}></StateQueryParam>
         <EasyStateHistory currentState={homeLoan}
                           loadState={state => setHomeLoan(state)}
                           historyName="homeloan"/>
