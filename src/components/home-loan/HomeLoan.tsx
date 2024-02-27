@@ -3,14 +3,15 @@ import React, { useContext, useImperativeHandle, useState } from "react";
 import { Accordion, Col, Form, FormGroup, Row, Table } from "react-bootstrap";
 import InputGroup from 'react-bootstrap/InputGroup';
 import { interestPayment, monthlyPayment } from "../../LoanFunctions";
-import {EasyStateHistory} from "../StateHistory";
+import { EasyStateHistory } from "../StateHistory";
+import { HomeLoanUrlLoader } from "./HomeLoanUrlLoader";
 
 type HomeLoanContext = {
     homeLoan: HomeLoanState,
     setHomeLoan: (homeLoanState: HomeLoanState) => void
 }
 
-type HomeLoanState = {
+export type HomeLoanState = {
     amount: number,
     rate: number,
     duration: number,
@@ -58,6 +59,7 @@ export const HomeLoan = React.forwardRef((_, ref) => {
         homeLoan,
         setHomeLoan
     })}>
+        <HomeLoanUrlLoader currentState={homeLoan} loadState={state => setHomeLoan(state)}></HomeLoanUrlLoader>
         <EasyStateHistory currentState={homeLoan}
                           loadState={state => setHomeLoan(state)}
                           historyName="homeloan"/>

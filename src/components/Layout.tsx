@@ -7,7 +7,7 @@ import {ThemeToggle} from "./ThemeToggle";
 
 export const Layout = () => {
     return <>
-        <Navbar expand="lg" className="bg-body-tertiary">
+        <Navbar expand="lg" className="bg-body-tertiary mb-3">
             <Container fluid>
                 <Navbar.Brand>gui-morel</Navbar.Brand>
                 <Navbar.Toggle aria-controls="navbarScroll"/>

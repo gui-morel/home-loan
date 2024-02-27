@@ -1,5 +1,4 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {Row} from 'react-bootstrap';
 import './App.css';
 import {HomeLoan} from './components/home-loan/HomeLoan';
 import {Investment} from './components/financial-investment/Investment';
