@@ -21,7 +21,7 @@ const router = createBrowserRouter([
             }
         ],
     },
-]);
+], {basename: "/home-loan/"});
 
 function App() {
     return <RouterProvider router={router}/>
