@@ -5,6 +5,7 @@ import { Investment } from './components/financial-investment/Investment';
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import React from "react";
 import { Layout } from "./components/Layout";
+import "./translation/i18n";
 
 const router = createBrowserRouter([
     {

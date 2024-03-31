@@ -6,6 +6,7 @@ import { interestPayment, monthlyPayment } from "../../LoanFunctions";
 import { EasyStateHistory } from "../StateHistory";
 import { StateQueryParam } from "../query-param-loader/StateQueryParam";
 import { toQueryParam, toState } from "../query-param-loader/queryParamFunctions";
+import { useTranslation } from "react-i18next";
 
 type HomeLoanContext = {
     homeLoan: HomeLoanState,
@@ -46,6 +47,7 @@ const HomeLoanContext = React.createContext<HomeLoanContext>({
 
 export const HomeLoan = React.forwardRef((_, ref) => {
     const [homeLoan, setHomeLoan] = useState<HomeLoanState>(defaultHomeLoan)
+    const { i18n, t } = useTranslation();
 
     useImperativeHandle(ref, () => ({
         loadState: (state: HomeLoanState) => {
@@ -68,7 +70,7 @@ export const HomeLoan = React.forwardRef((_, ref) => {
         <HomeLoanResume></HomeLoanResume>
         <Accordion defaultActiveKey="0">
             <Accordion.Item eventKey="0">
-                <Accordion.Header>Amortization Schedule</Accordion.Header>
+                <Accordion.Header>{t("amortizationSchedule")}</Accordion.Header>
                 <Accordion.Body>
                     <AmortizationSchedule></AmortizationSchedule>
                 </Accordion.Body>
@@ -136,16 +138,17 @@ const computeMensuality = (loanAmount: number, outstandingLoanBalance: number, l
 
 const AmortizationSchedule = () => {
     const { homeLoan } = useContext(HomeLoanContext)
+    const { i18n, t } = useTranslation();
 
     return <Table striped bordered hover>
         <thead className="sticky-top bg-light">
             <tr>
-                <th>Date<sup className="text-muted">(dd/mm/aaaa)</sup></th>
-                <th>Month</th>
-                <th>Outstanding Loan Balance</th>
-                <th>Monthly Payment (Principal + Interest)</th>
-                <th>Principal to Date</th>
-                <th>Interest to Date</th>
+                <th>{t("date")}<sup className="text-muted">(dd/mm/aaaa)</sup></th>
+                <th>{t("month")}</th>
+                <th>{t("outstandingLoanBalance")}</th>
+                <th>{t("monthlyPayment")}</th>
+                <th>{t("principalToDate")}</th>
+                <th>{t("interestToDate")}</th>
             </tr>
         </thead>
         <tbody>
@@ -184,38 +187,39 @@ const AmortizationSchedule = () => {
 
 const HomeLoanResume = () => {
     const { homeLoan } = useContext(HomeLoanContext)
+    const { i18n, t } = useTranslation();
 
     return <>
         <FormGroup as={Row} className="mb-3 mt-3">
-            <Form.Label sm={2} column htmlFor="loan-amount">Amount</Form.Label>
+            <Form.Label sm={2} column htmlFor="loan-amount">{t("amount")}</Form.Label>
             <Col sm={10}>
                 <Form.Control id="loan-amount" disabled type="text" value={homeLoan.amount.toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} />
             </Col>
         </FormGroup>
 
         <FormGroup as={Row} className="mb-3">
-            <Form.Label sm={2} column htmlFor="loan-rate">Rate</Form.Label>
+            <Form.Label sm={2} column htmlFor="loan-rate">{t("rate")}</Form.Label>
             <Col sm={10}>
                 <Form.Control id="loan-rate" disabled type="text" value={`${homeLoan.rate} %`} />
             </Col>
         </FormGroup>
 
         <FormGroup as={Row} className="mb-3">
-            <Form.Label sm={2} column htmlFor="loan-duration">Month Count</Form.Label>
+            <Form.Label sm={2} column htmlFor="loan-duration">{t("monthCount")}</Form.Label>
             <Col sm={10}>
                 <Form.Control id="loan-duration" disabled type="text" value={homeLoan.duration} />
             </Col>
         </FormGroup>
 
         <FormGroup as={Row} className="mb-3">
-            <Form.Label sm={2} column htmlFor="loan-cost">Loan Cost</Form.Label>
+            <Form.Label sm={2} column htmlFor="loan-cost">{t("loanCost")}</Form.Label>
             <Col sm={10}>
                 <Form.Control id="loan-duration" disabled type="text" value={(monthlyPayment(homeLoan.amount, homeLoan.rate / 100, homeLoan.duration) * homeLoan.duration - homeLoan.amount).toLocaleString(currencyToLocal(homeLoan.currency), { style: 'currency', currency: homeLoan.currency })} />
             </Col>
         </FormGroup>
 
         <FormGroup as={Row} className="mb-3">
-            <Form.Label sm={2} column htmlFor="loan-beggin">Loan Beggin</Form.Label>
+            <Form.Label sm={2} column htmlFor="loan-beggin">{t("loanBeggin")}</Form.Label>
             <Col sm={10}>
                 <Form.Control id="loan-beggin" disabled type="date" value={moment(homeLoan.startDate).format("YYYY-MM-DD")} />
             </Col>
@@ -223,7 +227,7 @@ const HomeLoanResume = () => {
 
 
         <FormGroup as={Row} className="mb-3">
-            <Form.Label sm={2} column htmlFor="loan-end">Loan End</Form.Label>
+            <Form.Label sm={2} column htmlFor="loan-end">{t("loanEnd")}</Form.Label>
             <Col sm={10}>
                 <Form.Control id="loan-end" disabled type="date" value={moment(homeLoan.startDate).add(homeLoan.duration, 'M').format("YYYY-MM-DD")} />
             </Col>

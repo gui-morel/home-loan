@@ -4,8 +4,12 @@ import { Container, Nav, Navbar } from "react-bootstrap";
 import { AiOutlineStock } from "react-icons/ai";
 import { FaHouseCircleCheck } from "react-icons/fa6";
 import { ThemeToggle } from "./ThemeToggle";
+import { useTranslation } from "react-i18next";
+import { LanguageSelect } from "../translation/LanguageSelect";
 
 const LayoutNav = () => {
+    const { i18n, t } = useTranslation();
+
     return <Navbar expand="lg" className="bg-body-tertiary mb-3">
         <Container fluid>
             <Navbar.Brand>gui-morel</Navbar.Brand>
@@ -16,10 +20,13 @@ const LayoutNav = () => {
                     style={{maxHeight: '100px'}}
                     navbarScroll
                 >
-                    <Nav.Link as={Link} to="/"><FaHouseCircleCheck/> Home Loan</Nav.Link>
-                    <Nav.Link as={Link} to="/investment"><AiOutlineStock/> Investment</Nav.Link>
+                    <Nav.Link as={Link} to="/"><FaHouseCircleCheck/> {t("homeLoan")}</Nav.Link>
+                    <Nav.Link as={Link} to="/investment"><AiOutlineStock/> {t("investment")}</Nav.Link>
                 </Nav>
-                <ThemeToggle/>
+                <div className="flex d-inline-flex gap-3">
+                    <LanguageSelect/>
+                    <ThemeToggle/>
+                </div>
             </Navbar.Collapse>
         </Container>
     </Navbar>;
