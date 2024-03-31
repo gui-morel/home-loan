@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { Dropdown } from "react-bootstrap";
 import React, { useState } from "react";
-import FlagIcon from "./Flags";
+import ReactCountryFlag from "react-country-flag";
 
 export const LanguageSelect = () => {
     const {i18n, t} = useTranslation();
 
     const [countries, setCountries] = useState(i18n.languages)
     const flagIcon = (code: string) => <>
-        <FlagIcon code={code}/> {code}
+        <ReactCountryFlag countryCode={code} /> {code}
     </>
 
     const [toggleContents, setToggleContents] = useState(flagIcon(i18n.language));
