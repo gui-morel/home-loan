@@ -11,6 +11,7 @@ i18n.use(initReactI18next).init({
         gb: {
             translation: {
                 title: 'Home Loan',
+                multiHomeLoan: 'Grouped Home Loan',
                 homeLoan: 'Home Loan',
                 investment: 'Investment',
                 amount: 'Amount',
@@ -31,6 +32,7 @@ i18n.use(initReactI18next).init({
         fr: {
             translation: {
                 title: 'Crédit Immobilier',
+                multiHomeLoan: 'Crédit Immobilier Groupé',
                 homeLoan: 'Crédit Immobilier',
                 investment: 'Investissement',
                 amount: 'Montant',

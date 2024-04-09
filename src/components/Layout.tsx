@@ -6,6 +6,7 @@ import { FaHouseCircleCheck } from "react-icons/fa6";
 import { ThemeToggle } from "./ThemeToggle";
 import { useTranslation } from "react-i18next";
 import { LanguageSelect } from "../translation/LanguageSelect";
+import { MdOutlineDomainDisabled } from "react-icons/md";
 
 const LayoutNav = () => {
     const { i18n, t } = useTranslation();
@@ -21,6 +22,7 @@ const LayoutNav = () => {
                     navbarScroll
                 >
                     <Nav.Link as={Link} to="/"><FaHouseCircleCheck/> {t("homeLoan")}</Nav.Link>
+                    <Nav.Link disabled><MdOutlineDomainDisabled /> {t("multiHomeLoan")}</Nav.Link>
                     <Nav.Link as={Link} to="/investment"><AiOutlineStock/> {t("investment")}</Nav.Link>
                 </Nav>
                 <div className="flex d-inline-flex gap-3">
